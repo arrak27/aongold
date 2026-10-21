@@ -747,9 +747,11 @@
                         <td class="py-3 px-3 text-right text-amber-300">${t.grams.toFixed(4)} g</td>
                         <td class="py-3 px-3 text-right"> ${(t.grams / GOLD_GRAMS_PER_BAHT).toFixed(4)} </td>
                         <td class="py-3 px-3 text-slate-400">${t.note}</td>
-                        <td class="py-3 px-3 text-center space-x-1">
-                            <button onclick="openEditModal('${t.id}')" class="text-amber-400 hover:text-amber-300 p-1.5" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteTx('${t.id}')" class="text-red-400 hover:text-red-300 p-1.5" title="ลบ"><i class="fa-solid fa-trash-can"></i></button>
+                        <td class="py-3 px-3 text-center">
+                            <div class="inline-flex items-center gap-1">
+                                <button onclick="openEditModal('${t.id}')" class="text-amber-400 hover:text-amber-300 p-1" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteTx('${t.id}')" class="text-red-400 hover:text-red-300 p-1" title="ลบ"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
                         </td>
                     </tr>
                 `).join('');
