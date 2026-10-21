@@ -22,9 +22,17 @@
                     },
                     colors: {
                         gold: {
-                            50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d',
-                            400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309',
-                            800: '#92400e', 900: '#78350f', glow: '#ffd700',
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                            glow: '#ffd700',
                         }
                     }
                 }
@@ -32,19 +40,57 @@
         }
     </script>
     <style>
-        body { font-family: 'Kanit', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-        .gold-gradient-text { background: linear-gradient(135deg, #fff3a1 0%, #f59e0b 50%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-gradient-bg { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .gold-gradient-btn { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); transition: all 0.2s ease-in-out; }
-        .gold-gradient-btn:hover { background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-        .gold-border-glow { border: 2px solid rgba(245, 158, 11, 0.5); box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
-        .avatar-glow { box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .avatar-glow:hover { transform: scale(1.06); box-shadow: 0 0 28px rgba(251, 191, 36, 0.9); }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #d97706; }
-        .passbook-stamp { border: 2px dashed #f59e0b; color: #f59e0b; transform: rotate(-3deg); }
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        /* Custom Gradient Utilities */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff3a1 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .gold-gradient-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            transition: all 0.2s ease-in-out;
+        }
+        .gold-gradient-btn:hover {
+            background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        .avatar-glow {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .avatar-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.8);
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+        /* Digital Passbook Stamp */
+        .passbook-stamp {
+            border: 2px dashed #f59e0b;
+            color: #f59e0b;
+            transform: rotate(-3deg);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-900">
@@ -52,8 +98,8 @@
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
-    <!-- MAIN APP WRAPPER -->
-    <div class="w-full min-h-screen flex flex-col">
+    <!-- MAIN APP CONTAINER (Blurred & locked when unauthenticated) -->
+    <div id="appContainer" class="w-full min-h-screen flex flex-col transition-all duration-300 blur-md pointer-events-none select-none">
         
         <!-- HEADER / NAVIGATION BAR -->
         <header class="bg-slate-900/90 backdrop-blur-md border-b border-amber-500/30 sticky top-0 z-40 px-4 py-3 sm:px-8">
@@ -62,15 +108,17 @@
                 <!-- Left: Profile & Brand Logo -->
                 <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
                     <div class="flex items-center gap-3">
+                        <!-- Dynamic Avatar Icon Toggle -->
                         <div class="relative cursor-pointer group" onclick="toggleProfileGender()" title="คลิกสลับรูปโปรไฟล์ ชาย/หญิง">
-                            <div id="avatarContainer" class="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 avatar-glow bg-slate-800 flex items-center justify-center p-1">
-                                <!-- Dynamic Avatar -->
+                            <div id="avatarContainer" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-amber-400 avatar-glow bg-slate-800 flex items-center justify-center p-1">
+                                <!-- Dynamic Avatar SVG inserted via JS -->
                             </div>
                             <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-slate-900 flex items-center gap-0.5 shadow">
                                 <i id="genderIcon" class="fa-solid fa-mars"></i>
                                 <span id="genderText">ชาย</span>
                             </span>
                         </div>
+                        
                         <div>
                             <div class="flex items-center gap-2">
                                 <h1 class="text-xl sm:text-2xl font-bold gold-gradient-text tracking-wide flex items-center gap-2">
@@ -78,13 +126,13 @@
                                 </h1>
                             </div>
                             <p class="text-xs text-amber-200/80 font-medium">
-                                ผู้ใช้งาน: <span id="currentUserName" class="text-white font-semibold">-</span>
-                                <span id="currentUserPhone" class="text-slate-400 text-[11px] ml-1">(-)</span>
+                                ผู้ใช้งาน: <span id="currentUserName" class="text-white font-semibold">คุณอ้น อารักษ์</span>
+                                <span id="currentUserPhone" class="text-slate-400 text-[11px] ml-1">(0889288920)</span>
                             </p>
                         </div>
                     </div>
 
-                    <!-- Mobile Logout -->
+                    <!-- Mobile Logout Button -->
                     <div class="flex sm:hidden items-center gap-2">
                         <button onclick="handleLogout()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 font-medium transition">
                             <i class="fa-solid fa-right-from-bracket"></i>
@@ -93,20 +141,27 @@
                     </div>
                 </div>
 
-                <!-- Right Action Buttons -->
+                <!-- Right Action Buttons (Desktop & Tablet) -->
                 <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
+                    <!-- Export CSV Button -->
                     <button onclick="exportCSV()" class="bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition shadow-lg">
                         <i class="fa-solid fa-file-csv text-emerald-400 text-base"></i>
                         <span>ส่งออก CSV</span>
                     </button>
+
+                    <!-- Security PIN Button -->
                     <button onclick="openSecurityModal()" class="bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition shadow-lg">
                         <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
-                        <span>รหัสความปลอดภัย</span>
+                        <span>รหัส PIN</span>
                     </button>
+
+                    <!-- Clear Data Button -->
                     <button onclick="confirmClearAllData()" class="bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/50 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition shadow-lg">
                         <i class="fa-solid fa-trash-can text-red-400 text-base"></i>
                         <span>ล้างข้อมูล</span>
                     </button>
+
+                    <!-- Desktop Logout Button -->
                     <button onclick="handleLogout()" class="hidden sm:flex bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium items-center gap-2 transition">
                         <i class="fa-solid fa-right-from-bracket text-slate-400"></i>
                         <span>ออกจากระบบ</span>
@@ -115,55 +170,90 @@
             </div>
         </header>
 
-        <!-- MAIN CONTENT AREA -->
+        <!-- MAIN DASHBOARD CONTENT -->
         <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-1 space-y-6">
 
-            <!-- STATISTICAL DASHBOARD -->
+            <!-- STATISTICAL SUMMARY CARDS (4 CARDS) -->
             <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl">
+                
+                <!-- Card 1: Total Savings Amount -->
+                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/60 transition group">
+                    <div class="absolute -right-4 -bottom-4 text-amber-500/10 text-7xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
                     <p class="text-xs font-medium text-amber-300/80 uppercase tracking-wider mb-1">เงินออมสะสมสุทธิ</p>
                     <div class="flex items-baseline gap-1.5">
                         <span id="statTotalAmount" class="text-2xl sm:text-3xl font-extrabold text-amber-400">0.00</span>
                         <span class="text-xs text-slate-400 font-normal">บาท</span>
                     </div>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i> บันทึกตามจริงทุกรายการ
+                    </p>
                 </div>
-                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl">
+
+                <!-- Card 2: Total Gold Weight Grams -->
+                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/60 transition group">
+                    <div class="absolute -right-4 -bottom-4 text-amber-500/10 text-7xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
                     <p class="text-xs font-medium text-amber-300/80 uppercase tracking-wider mb-1">ทองคำสะสมรวม</p>
                     <div class="flex items-baseline gap-1.5">
                         <span id="statTotalGrams" class="text-2xl sm:text-3xl font-extrabold text-amber-300">0.0000</span>
                         <span class="text-xs text-slate-400 font-normal">กรัม</span>
                     </div>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-cubes-stacked text-amber-400"></i> ทองคำมาตรฐาน 96.5%
+                    </p>
                 </div>
-                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl">
+
+                <!-- Card 3: Standard Thai Gold Baht Weight -->
+                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/60 transition group">
+                    <div class="absolute -right-4 -bottom-4 text-amber-500/10 text-7xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
                     <p class="text-xs font-medium text-amber-300/80 uppercase tracking-wider mb-1">คิดเป็นน้ำหนักบาททอง</p>
                     <div class="flex items-baseline gap-1.5">
                         <span id="statTotalBahtWeight" class="text-2xl sm:text-3xl font-extrabold text-amber-200">0.0000</span>
                         <span class="text-xs text-slate-400 font-normal">บาททองคำ</span>
                     </div>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-calculator text-amber-400"></i> (1 บาททอง = 15.244 กรัม)
+                    </p>
                 </div>
-                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl">
+
+                <!-- Card 4: Total Transactions Count -->
+                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/60 transition group">
+                    <div class="absolute -right-4 -bottom-4 text-amber-500/10 text-7xl group-hover:scale-110 transition">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
                     <p class="text-xs font-medium text-amber-300/80 uppercase tracking-wider mb-1">จำนวนรายการทั้งหมด</p>
                     <div class="flex items-baseline gap-1.5">
                         <span id="statTotalCount" class="text-2xl sm:text-3xl font-extrabold text-white">0</span>
                         <span class="text-xs text-slate-400 font-normal">รายการ</span>
                     </div>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-clock-rotate-left text-sky-400"></i> บันทึกล่าสุดอัตโนมัติ
+                    </p>
                 </div>
+
             </section>
 
-            <!-- DEPOSIT FORM & TAB SWITCHER -->
+            <!-- FORM & TAB SECTION -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- LEFT COLUMN: DEPOSIT FORM -->
+                <!-- LEFT COLUMN: DEPOSIT FORM (4 cols) -->
                 <div class="lg:col-span-4 bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
                             <h2 class="text-lg font-bold text-amber-300 flex items-center gap-2">
                                 <i class="fa-solid fa-circle-plus text-amber-400"></i> บันทึกการออมทอง
                             </h2>
-                            <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">MTS Gold System</span>
+                            <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">MTS System</span>
                         </div>
 
                         <form id="depositForm" onsubmit="handleDepositSubmit(event)" class="space-y-4">
+                            
+                            <!-- Date Selection -->
                             <div>
                                 <label class="block text-xs font-medium text-slate-300 mb-1">
                                     <i class="fa-regular fa-calendar-days text-amber-400 mr-1"></i> วันที่ทำรายการ
@@ -171,12 +261,13 @@
                                 <input type="date" id="txDate" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-400 transition">
                             </div>
 
+                            <!-- Deposit Mode Selection -->
                             <div>
                                 <label class="block text-xs font-medium text-slate-300 mb-1">
                                     <i class="fa-solid fa-sliders text-amber-400 mr-1"></i> โหมดการบันทึก
                                 </label>
                                 <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 border border-slate-800 rounded-xl">
-                                    <button type="button" id="modeBahtBtn" onclick="switchDepositMode('baht')" class="py-1.5 text-xs font-semibold rounded-lg transition text-slate-950 gold-gradient-bg shadow">
+                                    <button type="button" id="modeBahtBtn" onclick="switchDepositMode('baht')" class="py-1.5 text-xs font-medium rounded-lg transition text-slate-950 gold-gradient-bg shadow font-semibold">
                                         <i class="fa-solid fa-baht-sign mr-1"></i> ซื้อด้วยเงินบาท (฿)
                                     </button>
                                     <button type="button" id="modeGramBtn" onclick="switchDepositMode('gram')" class="py-1.5 text-xs font-medium text-slate-400 rounded-lg hover:text-white transition">
@@ -185,6 +276,7 @@
                                 </div>
                             </div>
 
+                            <!-- Market Gold Reference Price -->
                             <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                                 <div class="flex items-center justify-between text-slate-400">
                                     <span>ราคาทองอ้างอิง (บาท/บาททอง):</span>
@@ -195,6 +287,7 @@
                                 </div>
                             </div>
 
+                            <!-- Input Baht Amount Mode -->
                             <div id="bahtInputContainer">
                                 <label class="block text-xs font-medium text-slate-300 mb-1">
                                     <i class="fa-solid fa-money-bill-wave text-amber-400 mr-1"></i> จำนวนเงินฝาก (บาท)
@@ -202,13 +295,15 @@
                                 <input type="number" id="txAmount" placeholder="เช่น 1000" step="0.01" min="1" oninput="calculateDepositEstimate()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-amber-300 font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition">
                             </div>
 
+                            <!-- Input Gram Weight Mode (Initially Hidden) -->
                             <div id="gramInputContainer" class="hidden">
                                 <label class="block text-xs font-medium text-slate-300 mb-1">
                                     <i class="fa-solid fa-weight-hanging text-amber-400 mr-1"></i> น้ำหนักทองคำ (กรัม)
                                 </label>
-                                <input type="number" id="txGrams" placeholder="ขั้นต่ำ 0.0001 กรัม" step="0.0001" min="0.0001" oninput="calculateDepositEstimate()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-amber-300 font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition">
+                                <input type="number" id="txGrams" placeholder="ขั้นต่ำ 0.01 กรัม" step="0.0001" min="0.0001" oninput="calculateDepositEstimate()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-amber-300 font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition">
                             </div>
 
+                            <!-- Auto Conversion Calculation Preview Box -->
                             <div class="bg-amber-950/20 border border-amber-500/30 rounded-xl p-3 flex items-center justify-between text-xs">
                                 <span class="text-slate-300">ผลการคำนวณโดยประมาณ:</span>
                                 <div class="text-right">
@@ -217,6 +312,7 @@
                                 </div>
                             </div>
 
+                            <!-- Remark / Note -->
                             <div>
                                 <label class="block text-xs font-medium text-slate-300 mb-1">
                                     <i class="fa-regular fa-comment-dots text-amber-400 mr-1"></i> หมายเหตุ / รายละเอียดเพิ่มเติม
@@ -224,16 +320,25 @@
                                 <textarea id="txNote" rows="2" placeholder="เช่น เงินออมประจำเดือน..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-400 transition resize-none"></textarea>
                             </div>
 
+                            <!-- Submit Button -->
                             <button type="submit" class="w-full gold-gradient-btn text-slate-950 font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg">
                                 <i class="fa-solid fa-floppy-disk text-base"></i>
                                 <span>บันทึกรายการออมทอง</span>
                             </button>
                         </form>
                     </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 text-center">
+                        <p class="text-[11px] text-slate-500 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-shield text-amber-400/60"></i> ข้อมูลปลอดภัย บันทึกในเบราว์เซอร์ของคุณ
+                        </p>
+                    </div>
                 </div>
 
-                <!-- RIGHT COLUMN: TABBED VIEWS -->
+                <!-- RIGHT COLUMN: TABBED VIEWS (8 cols) -->
                 <div class="lg:col-span-8 bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 shadow-2xl flex flex-col">
+                    
+                    <!-- Tab Switching Header -->
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4 flex-wrap gap-2">
                         <div class="flex items-center gap-2">
                             <button onclick="switchTab('tabHistory')" id="tabBtnHistory" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-amber-500/20 text-amber-300 border border-amber-500/40">
@@ -242,18 +347,20 @@
                             </button>
                             <button onclick="switchTab('tabPassbook')" id="tabBtnPassbook" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
                                 <i class="fa-solid fa-book-bookmark"></i>
-                                <span>สมุดออมทองดิจิทัล</span>
+                                <span>สมุดออมทองดิจิทัล (Digital Passbook)</span>
                             </button>
                         </div>
+
+                        <!-- Search / Filter Box -->
                         <div class="relative w-full sm:w-48">
                             <input type="text" id="searchInput" onkeyup="renderAllData()" placeholder="ค้นหาประวัติ..." class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
                             <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-500 text-xs"></i>
                         </div>
                     </div>
 
-                    <!-- TAB 1: HISTORY -->
+                    <!-- TAB 1: TRANSACTION HISTORY TABLE -->
                     <div id="tabHistoryContent" class="block space-y-4">
-                        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/50">
+                        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/50 min-h-[300px]">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="bg-slate-800/80 text-amber-300 text-xs border-b border-slate-700/80">
@@ -267,31 +374,35 @@
                                     </tr>
                                 </thead>
                                 <tbody id="historyTableBody" class="divide-y divide-slate-800 text-xs text-slate-200">
-                                    <!-- Dynamic -->
+                                    <!-- Rendered dynamically via JS -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- TAB 2: PASSBOOK -->
+                    <!-- TAB 2: DIGITAL PASSBOOK VIEW -->
                     <div id="tabPassbookContent" class="hidden space-y-4">
                         <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/40 border-2 border-amber-500/40 rounded-2xl p-4 sm:p-6 shadow-2xl relative">
+                            
+                            <!-- Passbook Header -->
                             <div class="flex flex-col sm:flex-row items-center justify-between border-b-2 border-amber-500/30 pb-4 mb-4 gap-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 text-2xl font-black shadow-lg">
                                         <i class="fa-solid fa-vault"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-bold text-amber-300 text-base sm:text-lg">สมุดคู่ฝากออมทองดิจิทัล</h3>
+                                        <h3 class="font-bold text-amber-300 text-base sm:text-lg">สมุดคู่ฝากออมทองดิจิทัล (Digital Gold Passbook)</h3>
                                         <p class="text-xs text-slate-400">MTS Gold Reference Standard Gold Savings Book</p>
                                     </div>
                                 </div>
                                 <div class="text-center sm:text-right">
-                                    <div id="passbookPhoneDisplay" class="text-xs font-mono text-amber-400 font-bold">เลขที่บัญชี: MTS-0000</div>
-                                    <div id="passbookNameDisplay" class="text-[11px] text-slate-400">ชื่อบัญชี: -</div>
+                                    <div class="text-xs font-mono text-amber-400 font-bold">เลขที่บัญชี: MTS-8892-0889</div>
+                                    <div class="text-[11px] text-slate-400">ชื่อบัญชี: <span id="passbookAccountName">คุณอ้น อารักษ์</span></div>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950">
+
+                            <!-- Passbook Table -->
+                            <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 min-h-[260px]">
                                 <table class="w-full text-left text-xs font-mono">
                                     <thead>
                                         <tr class="bg-amber-950/40 text-amber-300 border-b border-amber-500/30">
@@ -305,58 +416,800 @@
                                         </tr>
                                     </thead>
                                     <tbody id="passbookTableBody" class="divide-y divide-slate-800 text-slate-300">
-                                        <!-- Dynamic -->
+                                        <!-- Rendered dynamically via JS -->
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Passbook Footer Seal -->
                             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-400 border-t border-slate-800 pt-3 gap-2">
                                 <div><i class="fa-solid fa-check-double text-emerald-400 mr-1"></i> รับรองระบบข้อมูลสมุดออมทองแบบเรียลไทม์</div>
                                 <div class="passbook-stamp px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">
                                     MTS GOLD VERIFIED
                                 </div>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
+
             </div>
+
         </main>
 
         <!-- FOOTER -->
         <footer class="bg-slate-950 border-t border-slate-800 py-4 px-4 text-center text-xs text-slate-500">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
                 <p>© 2026 ระบบออมทองคำ - คุณอ้น อารักษ์ (MTS Gold Ref). All Rights Reserved.</p>
-                <p class="text-amber-400/80">ระบบปลอดภัยด้วย LocalStorage & Security PIN</p>
+                <p class="text-amber-400/80">ระบบปลอดภัยด้วย LocalStorage Authorization System</p>
             </div>
         </footer>
+
     </div>
 
-    <!-- AUTH MODAL (LOGIN / REGISTER) -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md hidden">
+    <!-- MODAL 1: MANDATORY AUTHENTICATION MODAL (Login / Register / Forgot PIN) -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md">
         <div class="bg-slate-900 border-2 border-amber-500/40 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            
+            <!-- Auth Header -->
             <div class="text-center mb-6">
                 <div class="w-16 h-16 rounded-full gold-gradient-bg mx-auto flex items-center justify-center text-slate-950 text-3xl font-bold shadow-lg mb-3">
                     <i class="fa-solid fa-coins"></i>
                 </div>
                 <h2 class="text-2xl font-bold gold-gradient-text">ระบบออมทองคำ</h2>
-                <p class="text-xs text-slate-400">MTS Gold Reference System</p>
+                <p class="text-xs text-slate-400">คุณอ้น อารักษ์ (MTS Gold Ref)</p>
             </div>
 
-            <!-- Quick Access Button -->
+            <!-- Quick Login Button for "คุณอ้น อารักษ์" -->
             <div class="mb-5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/40 text-center">
-                <p class="text-xs text-amber-300 font-semibold mb-2">⚡ ทางด่วนเข้าใช้งาน (คุณอ้น อารักษ์)</p>
-                <button onclick="quickLoginAon()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold py-2 rounded-lg text-xs shadow hover:brightness-110 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-user-check"></i>
+                <p class="text-xs text-amber-300 font-semibold mb-2">⚡ ทางด่วนเข้าใช้งานสำหรับเจ้าของบัญชี</p>
+                <button onclick="quickLoginAon()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow hover:brightness-110 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-check text-sm"></i>
                     <span>เข้าสู่ระบบด่วน: คุณอ้น อารักษ์ (0889288920)</span>
                 </button>
             </div>
 
-            <!-- Tabs -->
-            <div class="flex border-b border-slate-800 mb-4 text-xs font-medium">
-                <button type="button" onclick="switchAuthTab('login')" id="authTabLogin" class="flex-1 py-2 text-center text-amber-400 border-b-2 border-amber-400 font-bold">เข้าสู่ระบบ</button>
-                <button type="button" onclick="switchAuthTab('register')" id="authTabRegister" class="flex-1 py-2 text-center text-slate-400 hover:text-slate-200">สมัครสมาชิกใหม่</button>
+            <!-- Auth Form Tabs -->
+            <div class="flex border-b border-slate-800 mb-5 text-xs font-medium">
+                <button type="button" onclick="switchAuthTab('login')" id="authTabLogin" class="flex-1 py-2 text-center text-amber-400 border-b-2 border-amber-400 font-bold">
+                    เข้าสู่ระบบ
+                </button>
+                <button type="button" onclick="switchAuthTab('register')" id="authTabRegister" class="flex-1 py-2 text-center text-slate-400 hover:text-slate-200">
+                    สมัครสมาชิกใหม่
+                </button>
+                <button type="button" onclick="switchAuthTab('forgot')" id="authTabForgot" class="flex-1 py-2 text-center text-slate-400 hover:text-slate-200">
+                    ลืมรหัส PIN
+                </button>
             </div>
 
-            <!-- FORM: LOGIN -->
+            <!-- LOGIN FORM -->
             <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-phone mr-
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-phone text-amber-400 mr-1"></i> เบอร์โทรศัพท์ (10 หลัก)</label>
+                    <input type="tel" id="loginPhone" required placeholder="0889288920" maxlength="10" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-key text-amber-400 mr-1"></i> รหัส PIN (4 หลัก)</label>
+                    <input type="password" id="loginPin" required maxlength="4" placeholder="••••" pattern="[0-9]{4}" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-center text-amber-300 tracking-widest font-bold focus:outline-none focus:border-amber-400">
+                </div>
+                <button type="submit" class="w-full gold-gradient-btn text-slate-950 font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </button>
+            </form>
+
+            <!-- REGISTER FORM (Hidden by default) -->
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-3 hidden">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-user text-amber-400 mr-1"></i> ชื่อ-นามสกุล</label>
+                    <input type="text" id="regName" required placeholder="เช่น คุณสมชาย สายออม" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-phone text-amber-400 mr-1"></i> เบอร์โทรศัพท์</label>
+                    <input type="tel" id="regPhone" required placeholder="08XXXXXXXX" maxlength="10" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-venus-mars text-amber-400 mr-1"></i> เพศ (รูปโปรไฟล์)</label>
+                    <select id="regGender" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <option value="male">ชาย</option>
+                        <option value="female">หญิง</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-lock text-amber-400 mr-1"></i> ตั้งรหัส PIN 4 หลัก</label>
+                    <input type="password" id="regPin" required maxlength="4" pattern="[0-9]{4}" placeholder="1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-center text-amber-300 font-bold focus:outline-none focus:border-amber-400">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>ยืนยันลงทะเบียน</span>
+                </button>
+            </form>
+
+            <!-- FORGOT PIN FORM (Hidden by default) -->
+            <form id="forgotForm" onsubmit="handleForgotSubmit(event)" class="space-y-3 hidden">
+                <p class="text-xs text-slate-400 mb-2">กรอกเบอร์โทรศัพท์ที่เคยลงทะเบียนไว้เพื่อรีเซ็ตรหัส PIN ใหม่</p>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-phone text-amber-400 mr-1"></i> เบอร์โทรศัพท์</label>
+                    <input type="tel" id="forgotPhone" required placeholder="0889288920" maxlength="10" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1"><i class="fa-solid fa-key text-amber-400 mr-1"></i> ตั้งรหัส PIN ใหม่ 4 หลัก</label>
+                    <input type="password" id="forgotNewPin" required maxlength="4" pattern="[0-9]{4}" placeholder="1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-center text-amber-300 font-bold focus:outline-none focus:border-amber-400">
+                </div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>รีเซ็ตรหัส PIN</span>
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- MODAL 2: EDIT TRANSACTION MODAL -->
+    <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-amber-500/40 w-full max-w-md rounded-2xl p-5 shadow-2xl relative">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> แก้ไขรายการออมทอง
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleEditSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="editTxId">
+                <div>
+                    <label class="block text-slate-300 mb-1">วันที่ทำรายการ</label>
+                    <input type="date" id="editTxDate" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-1">ยอดเงินฝาก (บาท)</label>
+                    <input type="number" id="editTxAmount" step="0.01" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-amber-300 font-bold">
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-1">น้ำหนักทองคำ (กรัม)</label>
+                    <input type="number" id="editTxGrams" step="0.0001" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-amber-300 font-bold">
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-1">หมายเหตุ</label>
+                    <textarea id="editTxNote" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"></textarea>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl font-medium">ยกเลิก</button>
+                    <button type="submit" class="flex-1 gold-gradient-btn text-slate-950 font-bold py-2 rounded-xl">บันทึกการแก้ไข</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SECURITY PIN MODAL -->
+    <div id="securityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-amber-500/40 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> เปลี่ยนรหัส PIN ความปลอดภัย
+                </h3>
+                <button onclick="closeSecurityModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleChangePinSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-300 mb-1">รหัส PIN เดิม</label>
+                    <input type="password" id="secOldPin" required maxlength="4" pattern="[0-9]{4}" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-amber-300 font-bold">
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-1">รหัส PIN ใหม่ (4 หลัก)</label>
+                    <input type="password" id="secNewPin" required maxlength="4" pattern="[0-9]{4}" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-amber-300 font-bold">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeSecurityModal()" class="flex-1 bg-slate-800 text-slate-300 py-2 rounded-xl">ยกเลิก</button>
+                    <button type="submit" class="flex-1 gold-gradient-btn text-slate-950 font-bold py-2 rounded-xl">เปลี่ยน PIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC SCRIPT -->
+    <script>
+        // System Constants
+        const GOLD_GRAMS_PER_BAHT = 15.244; // Standard Thai Gold Baht Weight (15.244 Grams)
+        const DEFAULT_USER = {
+            name: 'คุณอ้น อารักษ์',
+            phone: '0889288920',
+            pin: '1234',
+            gender: 'male'
+        };
+
+        // Current Application State
+        let currentDepositMode = 'baht'; // 'baht' or 'gram'
+        let currentUser = null;
+        let activeTab = 'tabHistory';
+
+        // Male / Female Avatar SVGs
+        const avatarSVGs = {
+            male: `<svg class="w-full h-full text-amber-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3zm0 4c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5zm-6 4c.22-1.37 2.82-3 6-3s5.78 1.63 6 3z"/></svg>`,
+            female: `<svg class="w-full h-full text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 0 5 5 5.5 5.5 0 0 0-5-5zm0 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3zm0 4c-4.2 0-8 2.05-8 4.75V20h16v-1.25C20 16.05 16.2 14 12 14zm-6 4c.3-1.22 2.83-2.5 6-2.5s5.7 1.28 6 2.5z"/></svg>`
+        };
+
+        // Window Onload Initialization
+        window.onload = function() {
+            // Set Default Date to Today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('txDate').value = today;
+
+            // Initialize Users Store if empty
+            let users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            if (!users.some(u => u.phone === DEFAULT_USER.phone)) {
+                users.push(DEFAULT_USER);
+                localStorage.setItem('mts_users', JSON.stringify(users));
+            }
+
+            // Check Persistent Session
+            const sessionPhone = localStorage.getItem('mts_session_phone');
+            if (sessionPhone) {
+                const user = users.find(u => u.phone === sessionPhone);
+                if (user) {
+                    loginUserSuccess(user, false);
+                    return;
+                }
+            }
+
+            // Force Authentication Modal display on initial unauthenticated load
+            showAuthModal();
+        };
+
+        // Show Toast Notification Message Box
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgBg = 'bg-slate-900 border-emerald-500 text-emerald-300';
+            let icon = 'fa-circle-check text-emerald-400';
+            
+            if (type === 'error') {
+                bgBg = 'bg-slate-900 border-red-500 text-red-300';
+                icon = 'fa-circle-xmark text-red-400';
+            } else if (type === 'info') {
+                bgBg = 'bg-slate-900 border-amber-500 text-amber-300';
+                icon = 'fa-circle-info text-amber-400';
+            }
+
+            toast.className = `${bgBg} border p-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-medium pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- AUTHENTICATION MODULE --- //
+
+        function showAuthModal() {
+            const authModal = document.getElementById('authModal');
+            const appContainer = document.getElementById('appContainer');
+            
+            authModal.classList.remove('hidden');
+            appContainer.classList.add('blur-md', 'pointer-events-none', 'select-none');
+        }
+
+        function hideAuthModal() {
+            const authModal = document.getElementById('authModal');
+            const appContainer = document.getElementById('appContainer');
+            
+            authModal.classList.add('hidden');
+            appContainer.classList.remove('blur-md', 'pointer-events-none', 'select-none');
+        }
+
+        function switchAuthTab(tab) {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('forgotForm').classList.add('hidden');
+
+            document.getElementById('authTabLogin').className = "flex-1 py-2 text-center text-slate-400 hover:text-slate-200";
+            document.getElementById('authTabRegister').className = "flex-1 py-2 text-center text-slate-400 hover:text-slate-200";
+            document.getElementById('authTabForgot').className = "flex-1 py-2 text-center text-slate-400 hover:text-slate-200";
+
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('authTabLogin').className = "flex-1 py-2 text-center text-amber-400 border-b-2 border-amber-400 font-bold";
+            } else if (tab === 'register') {
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('authTabRegister').className = "flex-1 py-2 text-center text-amber-400 border-b-2 border-amber-400 font-bold";
+            } else if (tab === 'forgot') {
+                document.getElementById('forgotForm').classList.remove('hidden');
+                document.getElementById('authTabForgot').className = "flex-1 py-2 text-center text-amber-400 border-b-2 border-amber-400 font-bold";
+            }
+        }
+
+        function quickLoginAon() {
+            const users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            let aon = users.find(u => u.phone === DEFAULT_USER.phone);
+            if (!aon) {
+                aon = DEFAULT_USER;
+            }
+            loginUserSuccess(aon, true);
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const phone = document.getElementById('loginPhone').value.trim();
+            const pin = document.getElementById('loginPin').value.trim();
+
+            const users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            const user = users.find(u => u.phone === phone && u.pin === pin);
+
+            if (user) {
+                loginUserSuccess(user, true);
+            } else {
+                showToast('เบอร์โทรศัพท์ หรือ รหัส PIN ไม่ถูกต้อง!', 'error');
+            }
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const gender = document.getElementById('regGender').value;
+            const pin = document.getElementById('regPin').value.trim();
+
+            let users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            if (users.some(u => u.phone === phone)) {
+                showToast('เบอร์โทรศัพท์นี้เคยลงทะเบียนไว้แล้ว', 'error');
+                return;
+            }
+
+            const newUser = { name, phone, gender, pin };
+            users.push(newUser);
+            localStorage.setItem('mts_users', JSON.stringify(users));
+
+            showToast('ลงทะเบียนสำเร็จ สามารถเข้าสู่ระบบได้ทันที', 'success');
+            loginUserSuccess(newUser, true);
+        }
+
+        function handleForgotSubmit(e) {
+            e.preventDefault();
+            const phone = document.getElementById('forgotPhone').value.trim();
+            const newPin = document.getElementById('forgotNewPin').value.trim();
+
+            let users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            const userIndex = users.findIndex(u => u.phone === phone);
+
+            if (userIndex !== -1) {
+                users[userIndex].pin = newPin;
+                localStorage.setItem('mts_users', JSON.stringify(users));
+                showToast('รีเซ็ตรหัส PIN สำเร็จ กรุณาลองเข้าสู่ระบบด้วย PIN ใหม่', 'success');
+                switchAuthTab('login');
+                document.getElementById('loginPhone').value = phone;
+                document.getElementById('loginPin').value = '';
+            } else {
+                showToast('ไม่พบข้อมูลเบอร์โทรศัพท์นี้ในระบบ', 'error');
+            }
+        }
+
+        function loginUserSuccess(user, showNotice = true) {
+            currentUser = user;
+            localStorage.setItem('mts_session_phone', user.phone);
+            
+            // Update UI Header profile
+            document.getElementById('currentUserName').innerText = user.name;
+            document.getElementById('currentUserPhone').innerText = `(${user.phone})`;
+            document.getElementById('passbookAccountName').innerText = user.name;
+            
+            updateAvatarUI(user.gender || 'male');
+
+            hideAuthModal();
+            renderAllData();
+
+            if (showNotice) {
+                showToast(`ยินดีต้อนรับ ${user.name} เข้าสู่ระบบ`, 'success');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('mts_session_phone');
+            currentUser = null;
+            showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
+            showAuthModal();
+        }
+
+        function toggleProfileGender() {
+            if (!currentUser) return;
+            const newGender = currentUser.gender === 'male' ? 'female' : 'male';
+            currentUser.gender = newGender;
+
+            // Update user in LocalStorage
+            let users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            const idx = users.findIndex(u => u.phone === currentUser.phone);
+            if (idx !== -1) {
+                users[idx].gender = newGender;
+                localStorage.setItem('mts_users', JSON.stringify(users));
+            }
+
+            updateAvatarUI(newGender);
+            showToast(`สลับรูปโปรไฟล์เป็นเพศ${newGender === 'male' ? 'ชาย' : 'หญิง'}`, 'info');
+        }
+
+        function updateAvatarUI(gender) {
+            const container = document.getElementById('avatarContainer');
+            const icon = document.getElementById('genderIcon');
+            const text = document.getElementById('genderText');
+
+            if (gender === 'female') {
+                container.innerHTML = avatarSVGs.female;
+                icon.className = 'fa-solid fa-venus';
+                text.innerText = 'หญิง';
+            } else {
+                container.innerHTML = avatarSVGs.male;
+                icon.className = 'fa-solid fa-mars';
+                text.innerText = 'ชาย';
+            }
+        }
+
+        // --- DEPOSIT FORM & CALCULATION LOGIC --- //
+
+        function switchDepositMode(mode) {
+            currentDepositMode = mode;
+            const bahtBtn = document.getElementById('modeBahtBtn');
+            const gramBtn = document.getElementById('modeGramBtn');
+            const bahtContainer = document.getElementById('bahtInputContainer');
+            const gramContainer = document.getElementById('gramInputContainer');
+
+            if (mode === 'baht') {
+                bahtBtn.className = "py-1.5 text-xs font-medium rounded-lg transition text-slate-950 gold-gradient-bg shadow font-semibold";
+                gramBtn.className = "py-1.5 text-xs font-medium text-slate-400 rounded-lg hover:text-white transition";
+                bahtContainer.classList.remove('hidden');
+                gramContainer.classList.add('hidden');
+            } else {
+                gramBtn.className = "py-1.5 text-xs font-medium rounded-lg transition text-slate-950 gold-gradient-bg shadow font-semibold";
+                bahtBtn.className = "py-1.5 text-xs font-medium text-slate-400 rounded-lg hover:text-white transition";
+                gramContainer.classList.remove('hidden');
+                bahtContainer.classList.add('hidden');
+            }
+            calculateDepositEstimate();
+        }
+
+        function calculateDepositEstimate() {
+            const refPrice = parseFloat(document.getElementById('refGoldPrice').value) || 43500;
+            const pricePerGram = refPrice / GOLD_GRAMS_PER_BAHT;
+            document.getElementById('refGramRateDisplay').innerText = pricePerGram.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            let grams = 0;
+            let bahtAmount = 0;
+
+            if (currentDepositMode === 'baht') {
+                bahtAmount = parseFloat(document.getElementById('txAmount').value) || 0;
+                grams = pricePerGram > 0 ? (bahtAmount / pricePerGram) : 0;
+            } else {
+                grams = parseFloat(document.getElementById('txGrams').value) || 0;
+                bahtAmount = grams * pricePerGram;
+            }
+
+            const bahtWeight = grams / GOLD_GRAMS_PER_BAHT;
+
+            document.getElementById('calcResultGrams').innerText = `${grams.toFixed(4)} กรัม`;
+            document.getElementById('calcResultBaht').innerText = `${bahtWeight.toFixed(4)} บาททอง (${bahtAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿)`;
+        }
+
+        function handleDepositSubmit(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast('กรุณาเข้าสู่ระบบก่อนทำรายการ', 'error');
+                return;
+            }
+
+            const date = document.getElementById('txDate').value;
+            const refPrice = parseFloat(document.getElementById('refGoldPrice').value) || 43500;
+            const pricePerGram = refPrice / GOLD_GRAMS_PER_BAHT;
+            const note = document.getElementById('txNote').value.trim();
+
+            let bahtAmount = 0;
+            let grams = 0;
+
+            if (currentDepositMode === 'baht') {
+                bahtAmount = parseFloat(document.getElementById('txAmount').value);
+                if (!bahtAmount || bahtAmount <= 0) {
+                    showToast('กรุณากรอกจำนวนเงินฝากให้ถูกต้อง', 'error');
+                    return;
+                }
+                grams = bahtAmount / pricePerGram;
+            } else {
+                grams = parseFloat(document.getElementById('txGrams').value);
+                if (!grams || grams <= 0) {
+                    showToast('กรุณากรอกน้ำหนักทองคำให้ถูกต้อง', 'error');
+                    return;
+                }
+                bahtAmount = grams * pricePerGram;
+            }
+
+            const newTx = {
+                id: 'TX' + Date.now(),
+                userPhone: currentUser.phone,
+                date: date,
+                amount: parseFloat(bahtAmount.toFixed(2)),
+                grams: parseFloat(grams.toFixed(4)),
+                refPrice: refPrice,
+                note: note || 'ออมทองคำ'
+            };
+
+            const transactions = getTransactions();
+            transactions.push(newTx);
+            saveTransactions(transactions);
+
+            // Reset form fields
+            document.getElementById('txAmount').value = '';
+            document.getElementById('txGrams').value = '';
+            document.getElementById('txNote').value = '';
+            calculateDepositEstimate();
+
+            renderAllData();
+            showToast('บันทึกรายการออมทองสำเร็จแล้ว!', 'success');
+        }
+
+        // --- DATA PERSISTENCE & RENDERING --- //
+
+        function getTransactions() {
+            if (!currentUser) return [];
+            const allTx = JSON.parse(localStorage.getItem('mts_transactions') || '[]');
+            return allTx.filter(t => t.userPhone === currentUser.phone);
+        }
+
+        function saveTransactions(userTxList) {
+            if (!currentUser) return;
+            const allTx = JSON.parse(localStorage.getItem('mts_transactions') || '[]');
+            // Filter out current user tx and append updated list
+            const otherUsersTx = allTx.filter(t => t.userPhone !== currentUser.phone);
+            const updatedAll = [...otherUsersTx, ...userTxList];
+            localStorage.setItem('mts_transactions', JSON.stringify(updatedAll));
+        }
+
+        function renderAllData() {
+            if (!currentUser) return;
+
+            let txList = getTransactions();
+            
+            // Search Filter
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchVal) {
+                txList = txList.filter(t => 
+                    t.date.includes(searchVal) || 
+                    t.note.toLowerCase().includes(searchVal) || 
+                    t.amount.toString().includes(searchVal) ||
+                    t.grams.toString().includes(searchVal)
+                );
+            }
+
+            // Sort transactions by date descending for History Table
+            txList.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Render Stats
+            let totalAmount = 0;
+            let totalGrams = 0;
+            txList.forEach(t => {
+                totalAmount += t.amount;
+                totalGrams += t.grams;
+            });
+
+            const totalBahtWeight = totalGrams / GOLD_GRAMS_PER_BAHT;
+
+            document.getElementById('statTotalAmount').innerText = totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('statTotalGrams').innerText = totalGrams.toFixed(4);
+            document.getElementById('statTotalBahtWeight').innerText = totalBahtWeight.toFixed(4);
+            document.getElementById('statTotalCount').innerText = txList.length;
+
+            // Render Tab 1: History Table
+            const historyBody = document.getElementById('historyTableBody');
+            if (txList.length === 0) {
+                historyBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">ไม่พบรายการบันทึกการออมทอง</td></tr>`;
+            } else {
+                historyBody.innerHTML = txList.map((t, index) => {
+                    const bahtWeight = (t.grams / GOLD_GRAMS_PER_BAHT).toFixed(4);
+                    return `
+                        <tr class="hover:bg-slate-900/60 transition">
+                            <td class="py-3 px-3 text-center text-slate-400 font-mono">${index + 1}</td>
+                            <td class="py-3 px-3 font-medium text-amber-100">${formatThaiDate(t.date)}</td>
+                            <td class="py-3 px-3 text-right font-bold text-amber-400 font-mono">฿${t.amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="py-3 px-3 text-right font-bold text-amber-300 font-mono">${t.grams.toFixed(4)} g</td>
+                            <td class="py-3 px-3 text-right text-slate-300 font-mono">${bahtWeight} บาท</td>
+                            <td class="py-3 px-3 text-slate-400 max-w-xs truncate">${t.note}</td>
+                            <td class="py-3 px-3 text-center space-x-1">
+                                <button onclick="openEditModal('${t.id}')" class="text-amber-400 hover:text-amber-300 p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteTransaction('${t.id}')" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Render Tab 2: Digital Passbook View (Ascending order for running balance)
+            const passbookTxList = [...txList].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const passbookBody = document.getElementById('passbookTableBody');
+            
+            if (passbookTxList.length === 0) {
+                passbookBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">ยังไม่มีประวัติในสมุดคู่ฝาก</td></tr>`;
+            } else {
+                let cumulativeGrams = 0;
+                let cumulativeAmount = 0;
+
+                passbookBody.innerHTML = passbookTxList.map((t) => {
+                    cumulativeGrams += t.grams;
+                    cumulativeAmount += t.amount;
+                    return `
+                        <tr class="hover:bg-amber-950/20 transition border-b border-slate-800/60">
+                            <td class="py-2.5 px-3 text-amber-200">${formatShortDate(t.date)}</td>
+                            <td class="py-2.5 px-3 text-slate-300">ฝากซื้อทองคำ</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-emerald-400">+${t.amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-amber-300">+${t.grams.toFixed(4)}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-amber-400 font-mono">${cumulativeGrams.toFixed(4)}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-white font-mono">${cumulativeAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="py-2.5 px-3 text-center"><span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">MTS OK</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // --- EDIT & DELETE TRANSACTIONS --- //
+
+        function openEditModal(id) {
+            const txList = getTransactions();
+            const tx = txList.find(t => t.id === id);
+            if (!tx) return;
+
+            document.getElementById('editTxId').value = tx.id;
+            document.getElementById('editTxDate').value = tx.date;
+            document.getElementById('editTxAmount').value = tx.amount;
+            document.getElementById('editTxGrams').value = tx.grams;
+            document.getElementById('editTxNote').value = tx.note;
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function handleEditSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editTxId').value;
+            let txList = getTransactions();
+            const idx = txList.findIndex(t => t.id === id);
+
+            if (idx !== -1) {
+                txList[idx].date = document.getElementById('editTxDate').value;
+                txList[idx].amount = parseFloat(document.getElementById('editTxAmount').value);
+                txList[idx].grams = parseFloat(document.getElementById('editTxGrams').value);
+                txList[idx].note = document.getElementById('editTxNote').value.trim();
+
+                saveTransactions(txList);
+                renderAllData();
+                closeEditModal();
+                showToast('แก้ไขข้อมูลเรียบร้อยแล้ว', 'success');
+            }
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('คุณแน่ใจหรือว่าต้องการลบรายการนี้?')) {
+                let txList = getTransactions();
+                txList = txList.filter(t => t.id !== id);
+                saveTransactions(txList);
+                renderAllData();
+                showToast('ลบรายการเรียบร้อยแล้ว', 'info');
+            }
+        }
+
+        function confirmClearAllData() {
+            const pin = prompt('คำเตือน: การล้างข้อมูลจะไม่สามารถกู้คืนได้\nกรุณากรอกรหัส PIN ของคุณเพื่อยืนยัน:');
+            if (pin === currentUser.pin) {
+                saveTransactions([]);
+                renderAllData();
+                showToast('ล้างข้อมูลประวัติการออมทองเรียบร้อยแล้ว', 'info');
+            } else if (pin !== null) {
+                showToast('รหัส PIN ไม่ถูกต้อง ไม่สามารถล้างข้อมูลได้', 'error');
+            }
+        }
+
+        // --- SECURITY PIN MODAL --- //
+
+        function openSecurityModal() {
+            document.getElementById('securityModal').classList.remove('hidden');
+        }
+
+        function closeSecurityModal() {
+            document.getElementById('securityModal').classList.add('hidden');
+            document.getElementById('secOldPin').value = '';
+            document.getElementById('secNewPin').value = '';
+        }
+
+        function handleChangePinSubmit(e) {
+            e.preventDefault();
+            const oldPin = document.getElementById('secOldPin').value.trim();
+            const newPin = document.getElementById('secNewPin').value.trim();
+
+            if (oldPin !== currentUser.pin) {
+                showToast('รหัส PIN เดิมไม่ถูกต้อง', 'error');
+                return;
+            }
+
+            currentUser.pin = newPin;
+            let users = JSON.parse(localStorage.getItem('mts_users') || '[]');
+            const idx = users.findIndex(u => u.phone === currentUser.phone);
+            if (idx !== -1) {
+                users[idx].pin = newPin;
+                localStorage.setItem('mts_users', JSON.stringify(users));
+            }
+
+            closeSecurityModal();
+            showToast('เปลี่ยนรหัส PIN เรียบร้อยแล้ว', 'success');
+        }
+
+        // --- TAB SWITCHING & CSV EXPORT --- //
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const historyContent = document.getElementById('tabHistoryContent');
+            const passbookContent = document.getElementById('tabPassbookContent');
+            const btnHistory = document.getElementById('tabBtnHistory');
+            const btnPassbook = document.getElementById('tabBtnPassbook');
+
+            if (tab === 'tabHistory') {
+                historyContent.classList.remove('hidden');
+                passbookContent.classList.add('hidden');
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                btnPassbook.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+            } else {
+                passbookContent.classList.remove('hidden');
+                historyContent.classList.add('hidden');
+                btnPassbook.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                btnHistory.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+            }
+        }
+
+        function exportCSV() {
+            const txList = getTransactions();
+            if (txList.length === 0) {
+                showToast('ไม่มีข้อมูลสำหรับส่งออก CSV', 'error');
+                return;
+            }
+
+            let csv = '\uFEFF'; // UTF-BOM for Thai display in Excel
+            csv += 'ลำดับ,วันที่ทำรายการ,ยอดเงิน (บาท),น้ำหนักทอง (กรัม),เทียบเท่าบาททอง,หมายเหตุ\n';
+
+            txList.forEach((t, i) => {
+                const bahtWeight = (t.grams / GOLD_GRAMS_PER_BAHT).toFixed(4);
+                csv += `"${i + 1}","${t.date}","${t.amount}","${t.grams}","${bahtWeight}","${t.note.replace(/"/g, '""')}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `รายงานออมทอง_${currentUser.name}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('ส่งออกไฟล์ CSV เรียบร้อยแล้ว', 'success');
+        }
+
+        // Utility Date Formatter
+        function formatThaiDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function formatShortDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parseInt(parts[0]) + 543}`;
+            }
+            return dateStr;
+        }
+    </script>
+</body>
+</html>
