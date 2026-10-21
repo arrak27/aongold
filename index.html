@@ -415,7 +415,8 @@
 
     <!-- SCRIPT APPLICATION -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbiobPv3HOE_at9utIuj1jYrUI7iXz4oixUfE6dWTa84Gvk4ER6b2guJxhXQdhOOBe/exec";
+        // อัปเดตเป็น URL เวอร์ชันใหม่แล้วเรียบร้อย
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwFHA8z2SCeo4OGBkIG8pPEewZ9dAjqFkvTSTMgc_MjAFMjeql2I5S8mLXrT8Bw3Iv/exec";
 
         const GOLD_GRAMS_PER_BAHT = 15.244;
         const DEFAULT_USER = {
@@ -454,7 +455,6 @@
         };
 
         async function fetchAllDataFromSheets() {
-            // ใช้โหมด no-cors ป้องกันหน้าเว็บค้างพัง และโหลดข้อมูลจาก LocalStorage มาใช้งานได้ทันที
             if (SCRIPT_URL) {
                 try {
                     await fetch(SCRIPT_URL, {
